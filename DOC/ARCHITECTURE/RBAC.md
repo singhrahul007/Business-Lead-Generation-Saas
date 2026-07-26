@@ -83,6 +83,8 @@ Use permission names to express capabilities across modules:
 - `crm.task.write`
 - `lead_discovery.read`
 - `lead_discovery.write`
+- `data_source_engine.read`
+- `data_source_engine.write`
 - `marketing.campaign.read`
 - `marketing.campaign.write`
 
@@ -144,7 +146,7 @@ This allows each user to belong to one or more organizations with a distinct rol
 ## Short-term tasks
 
 - Align role names across `types` and RBAC helpers.
-- Implement lookup for an authenticated users current organization membership.
+- Implement lookup for an authenticated user's current organization membership.
 - Replace hard-coded `canAccess('owner', ...)` UI examples with real membership context.
 - Add API route authorization and Supabase RLS policies.
 

@@ -2,8 +2,8 @@
 | -------------- | --------------------------------------------- |
 | ✅ Sprint 001   | Project stabilization                         |
 | ✅ Sprint 002   | Production database & multi-tenant foundation |
-| **Sprint 003** | Authentication & Organization Management UI   |
-| **Sprint 004** | Google Places Lead Discovery                  |
+| ✅ Sprint 003   | Lead Discovery Foundation & CRM Integration   |
+| **Sprint 004** | Data Source Engine Foundation                 |
 | **Sprint 005** | CRM (Companies, Contacts, Leads, Deals)       |
 | **Sprint 006** | AI Business Audit                             |
 | **Sprint 007** | Marketing & Outreach                          |

@@ -11,6 +11,7 @@ All notable changes to this repository will be documented in this file.
 - Added shared `UserService` and `PermissionService` modules to centralize auth-user, profile, membership, and access resolution.
 - Added route classification helpers for public vs authenticated application paths.
 - Added RBAC tests for public route detection and default authentication enforcement.
+- Added documentation refactor for the Data Source Engine architecture while keeping Lead Discovery as the user-facing feature.
 
 ### Changed
 - Integrated Zod validation and React Hook Form into `components/crm/crm-forms.tsx` for leads, companies, deals, tasks, and notes.
@@ -18,7 +19,7 @@ All notable changes to this repository will be documented in this file.
 - Consolidated auth, organization, and permission consumers onto shared service entry points.
 - Updated middleware to protect all non-public application routes by default instead of relying only on a fixed protected-prefix list.
 - Standardized redirects so unauthenticated users are sent to `/login` and unauthorized tenant users are redirected to `/organizations`.
-- Refreshed project status, schema, and API documentation to match the current implementation.
+- Refreshed project status, schema, API, roadmap, sprint, and README documentation to match the current implementation and the Data Source Engine terminology.
 
 ### Fixed
 - Closed the route protection gap that previously left future authenticated routes dependent on manual prefix registration.

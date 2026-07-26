@@ -28,7 +28,7 @@ The product is organized as a modular monorepo so key capabilities can be develo
 - apps/api: API and edge function entry points
 - packages/ui: shared UI components
 - packages/crm: CRM domain logic
-- packages/lead-discovery: lead discovery and enrichment
+- packages/data-source-engine: provider-agnostic business discovery and enrichment engine
 - packages/marketing: campaigns and messaging workflows
 - packages/ai-engine: AI reports and recommendations
 - packages/analytics: metrics, dashboards, and reporting
@@ -36,18 +36,15 @@ The product is organized as a modular monorepo so key capabilities can be develo
 - packages/shared: shared utilities and types
 - packages/database: schema and persistence helpers
 
-## Table of Contents
+## Lead Discovery vs Data Source Engine
 
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- **Lead Discovery** is the user-facing feature.
+- **Data Source Engine** is the internal architecture layer that powers Lead Discovery and future provider integrations.
+- The engine normalizes business data from providers such as Google Places, Yelp, Bing Maps, OpenStreetMap, Justdial, IndiaMART, CSV imports, and future sources.
 
 ## Features
 
-- **Lead Discovery**: Integrate with Google Places API to discover leads based on industry, keywords, and location.
+- **Lead Discovery**: Search and import businesses using the Data Source Engine.
 - **CRM**: Manage leads, contacts, companies, deals, and tasks with a user-friendly interface.
 - **Marketing Automation**: Automate marketing campaigns across various channels including email, SMS, and social media.
 - **Analytics**: Gain insights into KPIs, revenue, and marketing ROI with customizable dashboards.

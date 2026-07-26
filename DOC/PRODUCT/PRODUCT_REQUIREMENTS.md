@@ -15,7 +15,7 @@
 1. Business Requirement
    - Capture the Marketing Manager's need to discover local businesses in Delhi for outreach.
 2. Architecture
-   - Define the solution architecture for lead discovery within the existing application.
+   - Define the solution architecture for Lead Discovery using the Data Source Engine.
 3. Database
    - Model business and search history data in the database.
 4. API
@@ -94,14 +94,13 @@ Marketing Managers need a fast way to find local businesses in Delhi, filter the
 
 ### Architecture
 
-- Use a server-side lead discovery service to hide API keys and enforce tenant scope.
+- Use a server-side Data Source Engine service to hide API keys and enforce tenant scope.
 - Keep search input and result UI in the root app.
 - Use shared authentication and organization context to determine the current tenant.
 
 ### Database
 
-- Add a `businesses` table to store discovered leads.
-- Add a `lead_search_history` table to store saved query filters.
+- Add provider-aware tables to store normalized businesses and search history.
 - Include organization scoping fields such as `organization_id`.
 
 ### API
@@ -113,14 +112,14 @@ Marketing Managers need a fast way to find local businesses in Delhi, filter the
 ### UI
 
 - Lead discovery page with a search form and result grid.
-- Controls for industry, keyword, city/state/country, radius.
+- Controls for provider, industry, keyword, city/state/country, radius.
 - Result cards with import actions.
 - Pagination controls and export button.
 
 ### Sprint Plan
 
 - Define types and validation for lead search.
-- Implement backend service for search and persistence.
+- Implement backend service for provider-agnostic search and persistence.
 - Build frontend search page using existing dashboard shell and forms.
 - Add duplicate detection and import safeguards.
 - Add export support for results.
@@ -133,10 +132,10 @@ Marketing Managers need a fast way to find local businesses in Delhi, filter the
 
 ### Documentation
 
-- Update `README.md` with lead discovery feature notes.
+- Update `README.md` with lead discovery and Data Source Engine feature notes.
 - Document API endpoints in `API_SPEC.md`.
 - Capture behavior in `PRODUCT_REQUIREMENTS.md`.
 
 ## Notes
 
-This product requirement focuses solely on the lead discovery feature within the scope of the current stabilization and foundation work. It is intentionally scoped to preserve tenant isolation, authentication, and core functionality without expanding into AI or marketing automation.
+This product requirement focuses solely on the lead discovery feature within the scope of the current stabilization and early feature foundation. It is intentionally scoped to preserve tenant isolation, authentication, and core functionality without expanding into AI or marketing automation.

@@ -59,6 +59,12 @@ LeadPilot AI now has a stable single-app Next.js foundation with Supabase SSR au
 - Unauthorized users are redirected to `/login` with a `redirectTo` query param.
 - Authenticated users without tenant permission are redirected to `/organizations` from protected organization subroutes.
 
+### Data Source Engine (planned)
+
+- Lead Discovery remains the user-facing feature.
+- The Data Source Engine will normalize business data from multiple providers.
+- Sprint 004 will introduce provider-agnostic discovery, search history, and provider health tracking.
+
 ### Services and Types
 
 - Shared services now centralize auth, user/profile, organization, and permission logic.
@@ -68,7 +74,7 @@ LeadPilot AI now has a stable single-app Next.js foundation with Supabase SSR au
 
 - Build and test validation still depend on local terminal reliability; editor diagnostics are currently clean, but full command execution must remain part of release validation.
 - CRM types, validation, and forms are now aligned with the database schema; detail pages, search/filter, pipelines, and activity logging remain to be implemented.
-- Lead discovery remains a functional foundation rather than a production-complete workflow.
+- Lead Discovery remains a functional foundation rather than a production-complete workflow.
 - API coverage is intentionally thin; most behavior is still expressed through typed service modules rather than a broad route layer.
 - Invitation acceptance, email delivery, and richer tenant administration flows remain incomplete.
 

@@ -4,6 +4,8 @@
 
 LeadPilot AI uses Supabase Postgres with migration-driven schema management under `supabase/migrations`. The current foundation is centered on authentication-linked profiles, multi-tenant organizations, organization memberships and settings, invitation records, and a tenant-scoped CRM schema.
 
+The Data Source Engine adds provider-aware discovery tables for normalized business data, provider health, and search history.
+
 ## Migration Inventory
 
 - `007_create_profiles_organizations.sql`
@@ -16,6 +18,8 @@ LeadPilot AI uses Supabase Postgres with migration-driven schema management unde
   - Adds audit columns, soft-delete support, stricter constraints, filtered indexes, update triggers, active-row-aware RLS, and same-organization profile visibility.
 - `011_crm_database_foundation.sql`
   - Completes the CRM schema with contacts, deals, pipelines, pipeline stages, tasks, notes, activity, tags, custom fields, tag assignments, custom field values, and active-row-aware RLS across CRM tables.
+- `012_data_source_engine.sql` (planned)
+  - Adds provider tables, search history, provider health, and business cache for the Data Source Engine.
 
 ## Core Tables
 
@@ -141,207 +145,69 @@ LeadPilot AI uses Supabase Postgres with migration-driven schema management unde
   - `deleted_at`
   - `deleted_by -> profiles(id)`
 
-### `crm_contacts`
+### Data Source Engine Tables (planned)
+
+### `data_source_providers`
+
+- Primary key: `id UUID`
+- Key columns:
+  - `key` (google_places, yelp, bing_maps, osm, justdial, indiamart, csv, mock)
+  - `name`
+  - `enabled`
+  - `config_json`
+  - `created_at`
+  - `updated_at`
+
+### `provider_health`
+
+- Primary key: `id UUID`
+- Key columns:
+  - `provider_key`
+  - `status`
+  - `last_checked_at`
+  - `latency_ms`
+  - `error_message`
+  - `created_at`
+  - `updated_at`
+
+### `lead_search_history`
 
 - Primary key: `id UUID`
 - Key columns:
   - `organization_id -> organizations(id)`
-  - `company_id -> crm_companies(id)`
-  - `owner_id -> profiles(id)`
-  - `full_name`
-  - `email`
+  - `profile_id -> profiles(id)`
+  - `provider_key`
+  - `keyword`
+  - `industry`
+  - `city`
+  - `state`
+  - `country`
+  - `radius`
+  - `page`
+  - `page_size`
+  - `result_count`
+  - `created_at`
+
+### `business_cache`
+
+- Primary key: `id UUID`
+- Key columns:
+  - `organization_id -> organizations(id)`
+  - `provider_key`
+  - `external_id`
+  - `business_name`
+  - `category`
+  - `address`
   - `phone`
-  - `title`
-  - `status`
-  - `linkedin_url`
-  - `notes`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
+  - `website`
+  - `email`
+  - `rating`
+  - `reviews`
+  - `latitude`
+  - `longitude`
+  - `last_refreshed_at`
   - `created_at`
   - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_pipelines`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `name`
-  - `description`
-  - `is_default`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_pipeline_stages`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `pipeline_id -> crm_pipelines(id)`
-  - `name`
-  - `position`
-  - `probability`
-  - `color`
-  - `is_closed_won`
-  - `is_closed_lost`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_deals`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `pipeline_id -> crm_pipelines(id)`
-  - `stage_id -> crm_pipeline_stages(id)`
-  - `company_id -> crm_companies(id)`
-  - `contact_id -> crm_contacts(id)`
-  - `lead_id -> crm_leads(id)`
-  - `owner_id -> profiles(id)`
-  - `title`
-  - `amount`
-  - `stage`
-  - `status`
-  - `expected_close_date`
-  - `closed_at`
-  - `notes`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_tasks`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `owner_id -> profiles(id)`
-  - `related_lead_id -> crm_leads(id)`
-  - `related_deal_id -> crm_deals(id)`
-  - `related_company_id -> crm_companies(id)`
-  - `related_contact_id -> crm_contacts(id)`
-  - `title`
-  - `description`
-  - `due_date`
-  - `priority`
-  - `status`
-  - `completed_at`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_notes`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `entity_type`
-  - `entity_id`
-  - `content`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_activity`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `actor_id -> profiles(id)`
-  - `entity_type`
-  - `entity_id`
-  - `action`
-  - `action_type`
-  - `details`
-  - `metadata`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_tags`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `name`
-  - `color`
-  - `description`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_tag_assignments`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `tag_id -> crm_tags(id)`
-  - `entity_type`
-  - `entity_id`
-  - `created_by -> profiles(id)`
-  - `created_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_custom_fields`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `entity_type`
-  - `name`
-  - `slug`
-  - `field_type`
-  - `options`
-  - `is_required`
-  - `is_active`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
-
-### `crm_custom_field_values`
-
-- Primary key: `id UUID`
-- Key columns:
-  - `organization_id -> organizations(id)`
-  - `custom_field_id -> crm_custom_fields(id)`
-  - `entity_type`
-  - `entity_id`
-  - `value_text`
-  - `value_number`
-  - `value_boolean`
-  - `value_date`
-  - `value_json`
-  - `created_by -> profiles(id)`
-  - `updated_by -> profiles(id)`
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `deleted_by -> profiles(id)`
 
 ## Indexes and Constraints
 
@@ -354,6 +220,7 @@ Notable indexes and constraints currently include:
 - `organization_invitations_organization_id_idx`
 - `crm_pipelines_unique_default_per_org`
 - filtered active-row indexes for organizations, memberships, settings, profiles, and CRM entity lookups
+- planned provider lookups on `(organization_id, provider_key, external_id)` and search history indexes for discovery queries
 
 ## Triggers and Helper Functions
 
@@ -406,6 +273,7 @@ RLS is enabled for:
 - `crm_tag_assignments`
 - `crm_custom_fields`
 - `crm_custom_field_values`
+- planned Data Source Engine tables
 
 The policy model enforces:
 
@@ -416,10 +284,11 @@ The policy model enforces:
 - membership and settings writes are restricted by role
 - CRM read access is tenant-scoped to organization members
 - CRM records use audit fields, update triggers, and soft delete columns for lifecycle tracking
-- pipeline, tag, and custom-field configuration writes are restricted to owner, admin, and manager roles
+- provider configuration and discovery data are restricted to organization-scoped access
+- provider, tag, and custom-field configuration writes are restricted to owner, admin, and manager roles
 - company, contact, lead, deal, task, note, activity, tag assignment, and custom-field value writes are restricted to owner, admin, manager, and member roles
 
 ## Notes
 
 - WI-201 adds the missing CRM schema and RLS coverage through `011_crm_database_foundation.sql`.
-- Analytics and notification tables referenced by long-term product plans are still outside the current migration set.
+- Phase 2 of Sprint 004 will add the Data Source Engine schema and keep all provider data organization-scoped.

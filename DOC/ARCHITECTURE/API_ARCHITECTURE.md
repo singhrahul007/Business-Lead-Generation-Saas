@@ -6,17 +6,19 @@ This document describes the REST API architecture, conventions, and implementati
 
 - **Consistency**: All endpoints follow the same request/response shapes.
 - **Security**: Every endpoint authenticates the caller and authorizes the action.
-- **Organization Scoping**: CRM data is isolated by organization.
+- **Organization Scoping**: CRM and discovery data are isolated by organization.
 - **Flexibility**: List endpoints support pagination, filtering, sorting, and search.
 - **Efficiency**: Bulk endpoints reduce round-trips for mass operations.
+- **Provider Agnosticism**: Lead Discovery APIs call the Data Source Engine, not a single vendor directly.
 
 ## Base URL
 
 All API routes are served under `/api` using Next.js App Router route handlers.
 
 ```
-/api/auth/*              # Authentication
-/api/crm/*               # CRM resources
+/api/auth/*                 # Authentication
+/api/crm/*                  # CRM resources
+/api/lead-discovery/*       # Data Source Engine / Lead Discovery resources
 ```
 
 ## Authentication
@@ -33,10 +35,10 @@ with HTTP status `401`.
 
 ## Authorization
 
-RBAC is enforced via `lib/rbac.ts`. CRM endpoints require:
+RBAC is enforced via `lib/rbac.ts`. CRM and discovery endpoints require module-specific permissions such as:
 
-- Read operations: `crm.read`
-- Write operations: `crm.write`
+- Read operations: `crm.read`, `lead_discovery.read`
+- Write operations: `crm.write`, `lead_discovery.write`
 
 Insufficient permissions return:
 
@@ -48,7 +50,7 @@ with HTTP status `403`.
 
 ## Organization Context
 
-After authentication, API handlers resolve the user's active organization via `services/crm/utils.ts#getActiveOrganizationId`. All CRM queries include `organization_id` filters; mutations inject the organization id into payloads.
+After authentication, API handlers resolve the user's active organization via shared organization context helpers. All CRM and discovery queries include `organization_id` filters; mutations inject the organization id into payloads.
 
 If no active organization is selected, the API returns:
 
@@ -70,6 +72,9 @@ Resources are plural nouns:
 /api/crm/tasks
 /api/crm/notes
 /api/crm/activities
+/api/lead-discovery/search
+/api/lead-discovery/businesses
+/api/lead-discovery/history
 ```
 
 ## Standard Endpoints
@@ -77,7 +82,7 @@ Resources are plural nouns:
 ### List Records
 
 ```
-GET /api/crm/{entity}?page=1&pageSize=25&search=acme&sortBy=created_at&sortDirection=desc&status=new
+GET /api/{resource}?page=1&pageSize=25&search=acme&sortBy=created_at&sortDirection=desc&status=new
 ```
 
 #### Query Parameters
@@ -108,41 +113,21 @@ GET /api/crm/{entity}?page=1&pageSize=25&search=acme&sortBy=created_at&sortDirec
 ### Create Record
 
 ```
-POST /api/crm/{entity}
+POST /api/{resource}
 ```
 
 #### Request Body
 
 Validated by the entity's Zod create schema. `organization_id` is injected server-side.
 
-```json
-{
-  "full_name": "Jane Doe",
-  "email": "jane@example.com",
-  "status": "new"
-}
-```
-
 #### Response
 
-```json
-{
-  "id": "...",
-  "organization_id": "...",
-  "full_name": "Jane Doe",
-  "email": "jane@example.com",
-  "status": "new",
-  "created_at": "...",
-  "updated_at": "..."
-}
-```
-
-HTTP status `201`.
+The created record with HTTP status `201`.
 
 ### Get Record
 
 ```
-GET /api/crm/{entity}/{id}
+GET /api/{resource}/{id}
 ```
 
 #### Response
@@ -152,18 +137,12 @@ The requested record or `404 Not Found` if it does not exist or belongs to anoth
 ### Update Record
 
 ```
-PATCH /api/crm/{entity}/{id}
+PATCH /api/{resource}/{id}
 ```
 
 #### Request Body
 
 Validated by the entity's Zod update schema (partial).
-
-```json
-{
-  "status": "contacted"
-}
-```
 
 #### Response
 
@@ -172,7 +151,7 @@ The updated record or `404 Not Found` if not accessible.
 ### Delete Record
 
 ```
-DELETE /api/crm/{entity}/{id}
+DELETE /api/{resource}/{id}
 ```
 
 #### Response
@@ -181,67 +160,25 @@ DELETE /api/crm/{entity}/{id}
 
 ## Bulk Endpoints
 
-Bulk operations are available at `/api/crm/{entity}/bulk`.
+Bulk operations are available at `/api/{resource}/bulk`.
 
 ### Bulk Create
 
 ```
-POST /api/crm/{entity}/bulk
+POST /api/{resource}/bulk
 ```
-
-#### Request Body
-
-An array of records validated by the create schema.
-
-```json
-[
-  { "full_name": "Alice", "email": "alice@example.com" },
-  { "full_name": "Bob", "email": "bob@example.com" }
-]
-```
-
-#### Response
-
-Array of created records with HTTP status `201`.
 
 ### Bulk Update
 
 ```
-PATCH /api/crm/{entity}/bulk
+PATCH /api/{resource}/bulk
 ```
-
-#### Request Body
-
-An object containing `ids` and the fields to update.
-
-```json
-{
-  "ids": ["id-1", "id-2"],
-  "status": "qualified"
-}
-```
-
-#### Response
-
-Array of updated records. Returns `403 Forbidden` if any id does not belong to the current organization.
 
 ### Bulk Delete
 
 ```
-DELETE /api/crm/{entity}/bulk
+DELETE /api/{resource}/bulk
 ```
-
-#### Request Body
-
-An array of ids.
-
-```json
-["id-1", "id-2"]
-```
-
-#### Response
-
-`204 No Content` on success. Returns `403 Forbidden` if any id does not belong to the current organization.
 
 ## Error Responses
 
@@ -259,21 +196,30 @@ All errors use a consistent JSON shape:
 | `404` | Resource not found |
 | `500` | Internal server error / database error |
 
+## Data Source Engine API Patterns
+
+The Data Source Engine should normalize provider behavior behind shared routes and service contracts.
+
+- `POST /api/lead-discovery/search`
+- `POST /api/lead-discovery/businesses`
+- `GET /api/lead-discovery/history`
+- `GET /api/lead-discovery/providers/health`
+
+Provider-specific details must remain inside the engine layer. API callers should only see normalized business results and provider metadata where needed.
+
 ## Implementation Layers
 
 ```
-Route Handler (app/api/crm/*/route.ts)
+Route Handler (app/api/*)
         │
         ▼
-Entity Route Factory (app/api/crm/lib/factory.ts)
+Entity Route Factory / Engine Service
         │
         ▼
-Auth Helpers (app/api/crm/lib/auth.ts)
-Query Parser (app/api/crm/lib/query.ts)
-Response Helpers (app/api/crm/lib/response.ts)
+Auth Helpers / Query Parser / Response Helpers
         │
         ▼
-Domain Service (services/crm/*.ts)
+Domain Service (services/*)
         │
         ▼
 Supabase Client (lib/supabase/server.ts)
@@ -283,13 +229,10 @@ Supabase Client (lib/supabase/server.ts)
 
 ### Adding a New Entity
 
-1. Define the TypeScript type in `types/crm.ts`.
-2. Add Zod create/update schemas in `lib/validators/crm.ts`.
-3. Implement the service in `services/crm/{entity}.ts` with `list`, `create`, `createMany`, `getById`, `update`, `updateMany`, `delete`, and `deleteMany` methods.
-4. Register the service in `services/crm/index.ts`.
-5. Create route files:
-   - `app/api/crm/{entity}/route.ts`
-   - `app/api/crm/{entity}/[id]/route.ts`
-   - `app/api/crm/{entity}/bulk/route.ts`
-6. Wire the service and schemas through `createEntityRoutes`.
+1. Define the TypeScript type in `types/*`.
+2. Add Zod create/update schemas in `lib/validators/*`.
+3. Implement the service in `services/*`.
+4. Register the service in the relevant barrel file.
+5. Create route files.
+6. Wire the service and schemas through the route handlers.
 7. Add tests and update API documentation.

@@ -2,11 +2,16 @@
 
 ## Mission
 
-You are the Lead Software Engineer, SaaS Architect, Technical Lead, Product Engineer, AI Engineer, Database Architect, and DevOps Engineer for **LeadPilot AI**.
+You are the lead software engineer responsible for building and maintaining **LeadPilot AI**, a production-grade AI-powered Lead Generation, CRM, Marketing Automation and Business Intelligence SaaS.
 
-LeadPilot AI is an enterprise-grade AI-powered Lead Generation, CRM, Marketing Automation, Customer Acquisition, and Business Intelligence platform.
+Every implementation must be:
 
-Your goal is to build production-ready software that is scalable, secure, maintainable, testable, and well documented.
+- Production ready
+- Secure
+- Scalable
+- Maintainable
+- Tested
+- Documented
 
 Never generate demo code, mock implementations, placeholder logic, fake data, or unfinished features.
 
@@ -14,14 +19,12 @@ Never generate demo code, mock implementations, placeholder logic, fake data, or
 
 # Documentation Structure
 
-All project documentation is located under `/docs`.
+All project documentation is located under `/DOC`.
 
 ```
-docs/
+DOC/
 │
 ├── instruction.md
-├── AI_CONTEXT.md
-│
 ├── architecture/
 ├── product/
 ├── development/
@@ -40,8 +43,8 @@ Minimize AI context usage.
 Always read:
 
 ```
-docs/instruction.md
-docs/AI_CONTEXT.md
+DOC/instruction.md
+DOC/AI_CONTEXT.md
 ```
 
 Then load ONLY the documentation required for the current task.
@@ -57,9 +60,10 @@ API
 
 - API_SPEC.md
 
-Lead Discovery
+Lead Discovery / Data Source Engine
 
 - GOOGLE_PLACES.md
+- any provider docs under the data source engine architecture
 
 CRM
 
@@ -469,289 +473,4 @@ Every implementation should help businesses:
 - Automate Marketing
 - Make Better Business Decisions
 
----
-
-# Project Progress Tracking
-
-PROJECT_STATUS.md is the project's single source of truth.
-
-After every completed Work Item update:
-
-- Current Sprint
-- Current Work Item
-- Completed Work Items
-- Remaining Work Items
-- Overall Progress (%)
-- Sprint Progress (%)
-- Files Created
-- Files Modified
-- Database Changes
-- API Changes
-- Build Status
-- TypeScript Status
-- Lint Status
-- Test Status
-- Pending Risks
-- Technical Debt
-- Next Recommended Work Item
-- Last Updated (Date & Time)
-
-Never leave PROJECT_STATUS.md outdated.
----
-# Development Session
-
-Every implementation session must end with a short development summary.
-
-Include:
-
-- Work Item Completed
-- Objective
-- Summary of Changes
-- Files Modified
-- Database Changes
-- API Changes
-- Tests Added
-- Documentation Updated
-- Known Issues
-- Next Recommended Work Item
-
-Stop after the summary.
----
-# Documentation Update Rules
-
-Update only the documents affected by the completed Work Item.
-
-Always update
-
-- PROJECT_STATUS.md
-- Current Sprint
-- Current Work Item
-- CHANGELOG.md
-
-Update only if changed
-
-- DATABASE_SCHEMA.md
-- API_SPEC.md
-- FEATURES.md
-- ROADMAP.md
-- README.md
-- PRODUCT_REQUIREMENTS.md
-
-Do not modify unrelated documentation.
----
-# Sprint Tracking
-
-After each Work Item
-
-Update the current Sprint document.
-
-Include
-
-- Completed Tasks
-- Remaining Tasks
-- Sprint Progress (%)
-- Risks
-- Blockers
-- Notes
----
-# Work Item Tracking
-
-Every Work Item must maintain
-
-- Status
-- Owner
-- Priority
-- Completion Date
-- Files Modified
-- Dependencies
-- Validation Status
-- Documentation Status
-- Build Status
----
-# Completion Rule
-
-When a Work Item is complete
-
-1. Run validation.
-2. Update documentation.
-3. Update PROJECT_STATUS.md.
-4. Update Sprint progress.
-5. Update CHANGELOG.md.
-6. Print a concise completion summary.
-7. Stop.
-
-Do not automatically continue with the next Work Item.
----
-# LeadPilot AI - Project Status
-
-## Project Information
-
-| Item | Status |
-|------|--------|
-| Project | LeadPilot AI |
-| Version | 0.1.0 |
-| Branch | main |
-| Environment | Development |
-| Last Updated | 2026-07-21 |
-
----
-
-# Overall Progress
-
-| Module | Progress |
-|---------|---------:|
-| Foundation | 70% |
-| Authentication | 60% |
-| Organizations | 40% |
-| RBAC | 35% |
-| CRM | 30% |
-| Lead Discovery | 15% |
-| Marketing Automation | 0% |
-| AI Engine | 0% |
-| Analytics | 10% |
-| Deployment | 5% |
-
-Overall Progress
-
-**28%**
-
----
-
-# Current Sprint
-
-Sprint
-
-Sprint-001
-
-Current Work Item
-
-WI-001
-
-Status
-
-🟡 In Progress
-
----
-
-# Completed Work Items
-
-- ✅ WI-001
-- ✅ WI-002
-- ✅ WI-003
-
----
-
-# Pending Work Items
-
-- ⏳ WI-004
-- ⏳ WI-005
-- ⏳ WI-006
-
----
-
-# Current Build Status
-
-| Check | Status |
-|--------|--------|
-| Build | ✅ |
-| TypeScript | ✅ |
-| Lint | ⚠️ |
-| Unit Tests | ⚠️ |
-| Integration Tests | ❌ |
-
----
-
-# Database Status
-
-Current Version
-
-v1
-
-Tables
-
-18
-
-RLS
-
-Partial
-
-Indexes
-
-Partial
-
-Migrations
-
-2
-
----
-
-# API Status
-
-Implemented
-
-12
-
-Pending
-
-24
-
----
-
-# Technical Debt
-
-- Hardcoded organization IDs
-- Missing API routes
-- Duplicate workspace
-- Missing shared types
-
----
-
-# Known Issues
-
-- Missing logout endpoint
-- Missing organization hooks
-- Placeholder packages
-- Broken imports
-
----
-
-# Recently Modified
-
-- app/auth/login/page.tsx
-- app/dashboard/page.tsx
-- packages/auth/*
-- supabase/migrations/*
-
----
-
-# Next Recommended Work Item
-
-WI-004
-
-Implement Organization Context
-
----
-
-# Documentation Status
-
-| Document | Status |
-|----------|--------|
-| README | ✅ |
-| API_SPEC | 🟡 |
-| DATABASE_SCHEMA | 🟡 |
-| CHANGELOG | ✅ |
-| ROADMAP | ✅ |
-
----
-# SUCCESS CRITERIA
-Application builds without errors.
-Authentication is fully functional.
-Organization and RBAC foundation is complete.
-Core database schema is implemented.
-Protected routes work correctly.
-No broken imports or placeholder modules remain in the foundation.
-# Development Notes
-
-Short notes about the latest completed Work Item.
----
 Every technical decision should support this vision.

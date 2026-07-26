@@ -50,7 +50,7 @@ The repository includes a placeholder package at `packages/ai-engine`, but there
 - Organization data
 - CRM records (leads, deals, tasks, notes)
 - Marketing performance metrics
-- Lead discovery activity
+- Data Source Engine activity
 - Business profile and location data
 
 ### Processing
@@ -60,7 +60,7 @@ The repository includes a placeholder package at `packages/ai-engine`, but there
   - organization profile
   - recent CRM activity
   - campaign performance
-  - business discovery findings
+  - normalized business discovery findings from the Data Source Engine
 
 ### Outputs
 

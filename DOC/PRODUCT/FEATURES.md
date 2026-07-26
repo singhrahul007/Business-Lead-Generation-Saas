@@ -15,7 +15,8 @@
 - Production-grade tenant management with org-scoped auth.
 - RBAC permission enforcement for workspace access.
 - Full Supabase schema alignment and row-level security.
-- Lead discovery integration with Google Places.
+- Data Source Engine integration with provider-agnostic business discovery.
+- Lead Discovery feature powered by the Data Source Engine.
 - Business import, duplicate detection, and refresh workflows.
 - Analytics and AI-driven reporting.
 - Marketing automation and campaign management.

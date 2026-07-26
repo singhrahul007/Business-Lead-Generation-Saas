@@ -19,7 +19,7 @@ LeadPilot AI is organized as a Next.js application with a root `app/` directory 
   - Domain-specific service functions that encapsulate Supabase operations and business logic.
 - `supabase/`
   - Migration and seed scripts for database schema and initial data.
-- `types.ts`
+- `types/`
   - Shared TypeScript type definitions across the app.
 
 ## Routing and Guarding
@@ -44,6 +44,39 @@ The architecture must support multi-tenant organizations with scoped membership 
 - Organization members have roles such as owner, admin, manager, member, and viewer.
 - Permissions are defined in a shared RBAC helper and should be enforced across UI and server operations.
 
+## Data Source Engine Architecture
+
+Lead Discovery is the user-facing feature. Internally, it is powered by a provider-agnostic Data Source Engine.
+
+### Responsibilities
+
+- Normalize business data from multiple external providers.
+- Register and resolve providers by name or capability.
+- Handle provider-specific errors, rate limits, and retries.
+- Support multiple data sources without changing CRM or UI code.
+
+### Provider Model
+
+The engine should support providers such as:
+
+- Google Places
+- Yelp
+- Bing Maps
+- OpenStreetMap
+- Justdial
+- IndiaMART
+- CSV import
+- Mock provider for offline/local development
+
+### Engine Flow
+
+1. Lead Discovery UI submits search filters.
+2. API calls the Data Source Engine.
+3. The engine selects the configured provider(s).
+4. Provider results are normalized into a shared business model.
+5. Duplicate detection and caching are applied.
+6. Results are returned to the UI and can be imported into CRM.
+
 ## Feature Modules
 
 The codebase is intended to expand into modular feature domains, but the current stable foundation should focus on:
@@ -51,7 +84,7 @@ The codebase is intended to expand into modular feature domains, but the current
 - Authentication
 - Organization management
 - Core CRM scaffolding
-- Lead discovery foundation
+- Data Source Engine and Lead Discovery foundation
 - Notification logging and channel dispatch
 
 ## Integration Patterns

@@ -63,33 +63,6 @@ Notes are represented by `crm_notes` and are bound to an entity type and entity 
 
 Activity timeline entries are represented by `crm_activity`.
 
-## Current CRM Page Experience
-
-The `app/crm/page.tsx` page currently:
-- Loads lead, company, contact, deal, task, and activity data using service calls
-- Displays KPI cards for counts of leads, companies, deals, and tasks
-- Displays recent activity items and upcoming tasks
-- Renders forms for creating new leads, companies, deals, tasks, and notes
-
-## Gaps and Improvements
-
-### Incomplete UX
-
-- No detail pages for leads, companies, contacts, or deals.
-- No search, filtering, or pagination for lists.
-- No contact creation UI.
-- Forms are not validated with consistent schemas.
-- There is no status or error display for service failures.
-- There is no real organization or tenant context.
-- `useEffect` manual data loading should be replaced with shared query hooks.
-
-### Missing Domain Rules
-
-- No ownership/assignment model for leads, deals, or tasks.
-- No pipeline/stage definitions in the UI.
-- No activity logging for create/update/delete operations.
-- No connection between lead discovery business data and CRM lead records.
-
 ## Recommended CRM Workflow
 
 ### Lead Capture
@@ -115,12 +88,6 @@ The `app/crm/page.tsx` page currently:
 1. Create tasks to follow up on leads, deals, or accounts.
 2. Log notes and actions against CRM entities.
 3. Use activity timeline entries to surface customer engagement and workflow history.
-
-### Reporting and Dashboards
-
-1. Surface high-value pipelines, top deals, and overdue tasks.
-2. Provide scorecards for lead conversion and revenue velocity.
-3. Add analytics around campaign impact and request pipeline health data.
 
 ## Next Implementation Steps
 

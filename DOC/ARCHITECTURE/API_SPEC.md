@@ -2,7 +2,7 @@
 
 ## Overview
 
-LeadPilot AI currently exposes a small route-layer API and a larger typed service layer. The production foundation relies on shared services for auth, user/profile, organization context, permissions, CRM access, and lead discovery integration.
+LeadPilot AI currently exposes a small route-layer API and a larger typed service layer. The production foundation relies on shared services for auth, user/profile, organization context, permissions, CRM access, and the Data Source Engine.
 
 ## Route-layer API
 
@@ -93,13 +93,31 @@ Implemented in `services/crm.ts`.
 - `createNote(payload)`
 - `getActivityTimeline()`
 
-## Lead Discovery Service Surface
+## Data Source Engine Service Surface
 
-Implemented in `services/lead-discovery/google-places.ts`.
+Lead Discovery is user-facing. The engine behind it is provider-agnostic.
+
+### Core service contract
 
 - `searchBusinesses(payload)`
 - `saveBusiness(payload)`
 - `getSearchHistory()`
+- `getProviderHealth()`
+
+### Provider contract
+
+- `searchBusinesses(payload)`
+- `getBusinessDetails(externalId)`
+- `healthCheck()`
+- `normalize(record)`
+
+### Providers
+
+- `GooglePlacesProvider`
+- `YelpProvider`
+- `BingMapsProvider`
+- `OpenStreetMapProvider`
+- `MockProvider`
 
 ## Route Protection Contract
 
@@ -132,81 +150,6 @@ Current authenticated areas include:
 
 ## Notes
 
-- No new route-layer API endpoints were introduced in WI-009.
-- This document was updated because the repository now has a real logout route and a defined route-protection contract, which the earlier version did not describe accurately.
-- Path: `/api/lead-discovery/search`
-- Request:
-  - `keyword`, `industry`, `city`, `state`, `country`, `radius`, `page`, `pageSize`
-- Response:
-  - `results` array of business profiles
-  - `searchHistory` array
-  - `error` string|null
-
-### Save discovered business
-
-- Method: `POST`
-- Path: `/api/lead-discovery/businesses`
-- Request:
-  - Business profile payload
-- Response:
-  - `business` object
-  - `error` string|null
-
-### Search history
-
-- Method: `GET`
-- Path: `/api/lead-discovery/history`
-- Response:
-  - `history` array
-  - `error` string|null
-
-## Notifications API
-
-### Send notification
-
-- Method: `POST`
-- Path: `/api/notifications/send`
-- Request:
-  - `type` (`email`, `sms`, `whatsapp`)
-  - `recipient`
-  - `message`
-- Response:
-  - `status` string
-  - `error` string|null
-- Current implementation: `sendNotification(notification)` in `services/notifications`
-
-## Analytics / Reporting API
-
-### Analytics data
-
-- Method: `GET`
-- Path: `/api/analytics`
-- Response:
-  - analytics metrics payload
-  - `error` string|null
-
-### Reports
-
-- Method: `GET /api/reports`
-  - Returns reports list.
-
-- Method: `POST /api/reports`
-  - Creates or generates a report.
-  - Request payload may include report type, date range, and filters.
-
-## Authentication and Authorization
-
-All API endpoints should require a valid authenticated session and enforce tenant scoping. Current code uses browser-side Supabase client operations with no server-side guard.
-
-## Error Handling
-
-Standardize the API response envelope:
-
-- `success`: boolean
-- `data`: object | null
-- `error`: string | null
-- `validationErrors`: object | null
-
-## Notes
-
-The current repository has partial application flow and scaffolding. Implementing a robust API layer is a priority before expanding CRM, lead discovery, and automation capabilities.
+- The Data Source Engine is the internal architecture layer.
+- Lead Discovery remains the user-facing feature that uses the engine.
+- Provider-specific differences are normalized before data reaches the CRM or UI.

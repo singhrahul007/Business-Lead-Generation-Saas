@@ -2,26 +2,27 @@
 
 ## Overview
 
-LeadPilot AI intends to use Google Places as the core lead discovery engine for finding local businesses that match a target industry, keyword, and geography.
+LeadPilot AI uses Google Places as one provider implementation inside the Data Source Engine. Lead Discovery remains the user-facing feature; Google Places is only one of the sources that can feed normalized business data into the platform.
 
-The current repository references search and save workflows in `app/leads/page.tsx`, but the actual imported service module path `@/services/lead-discovery/google-places` does not exist.
+The current repository references search and save workflows in `app/leads/page.tsx`, but the actual imported service module path `@/services/lead-discovery/google-places` is being replaced by the provider-agnostic Data Source Engine layer.
 
 ## Current Behavior (Planned)
 
 The lead discovery page is designed to:
 
 - Collect search inputs: keyword, industry, city, state, country, radius
-- Execute a search request to Google Places
+- Execute a search request through the Data Source Engine
 - Persist the discovered business data to Supabase
 - Show recent search history and search results
 
 ## Planned Data Flow
 
 1. User submits a search query.
-2. A backend service calls Google Places API with the requested filters.
-3. Results are normalized into the application business schema.
-4. The top match can be saved into the local database.
-5. Search history is logged for later review.
+2. The Data Source Engine selects the configured provider(s).
+3. Google Places provider performs the search when selected.
+4. Results are normalized into the application business schema.
+5. The top match can be saved into the local database.
+6. Search history is logged for later review.
 
 ## Key Integration Points
 
@@ -61,6 +62,7 @@ Capture search queries and filters for reuse:
 - `state`
 - `country`
 - `radius`
+- `provider_key`
 - `created_at`
 
 ## Deduplication Strategy
@@ -98,7 +100,8 @@ Because businesses can appear across searches, the app should deduplicate saved 
 
 ## Next Steps
 
-- Add `services/lead-discovery/google-places.ts` with a server-side wrapper around Google Places.
+- Add the Data Source Engine provider interface and registry.
+- Implement `GooglePlacesProvider` inside the provider folder.
 - Create a `businesses` table in migrations to match the seed script.
 - Implement a server action or API route to persist search history and save businesses.
-- Wire the `app/leads` page to the backend service instead of calling a non-existent module path.
+- Wire the `app/leads` page to the Data Source Engine service instead of calling a provider-specific module path.
