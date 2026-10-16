@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const domain = url ? url.replace(/^https?:\/\//i, '').split('/')[0] : `${(companyName || 'lead').toLowerCase().replace(/\s+/g, '')}.com`;
 
     // High quality deterministic simulation based on domain/inputs
-    const hash = (domain + (industry || '')).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = (domain + (industry || '')).split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
     const seoScore = 65 + (hash % 30);
     const perfScore = 55 + ((hash * 3) % 40);
     const accessScore = 70 + ((hash * 7) % 25);

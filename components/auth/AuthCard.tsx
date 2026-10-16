@@ -28,7 +28,7 @@ export function AuthCard({ title, subtitle, children, footerText, footerHref, fo
         {children}
         <div className="mt-6 text-center text-sm text-slate-300">
           {footerText}{' '}
-          <Link href={footerHref} className="font-medium text-cyan-300 transition hover:text-cyan-200">
+          <Link href={footerHref as any} className="font-medium text-cyan-300 transition hover:text-cyan-200">
             {footerLinkText}
           </Link>
         </div>

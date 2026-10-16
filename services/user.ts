@@ -11,7 +11,7 @@ function buildProfilePayload(user: AuthUser) {
     id: user.id,
     email: user.email ?? '',
     full_name: user.user_metadata.full_name ?? null,
-    role: user.user_metadata.role ?? 'member',
+    role: (user.user_metadata.role as any) ?? 'member',
   } satisfies Partial<Profile> & Pick<Profile, 'id' | 'email'>;
 }
 
@@ -41,17 +41,21 @@ export const UserService = {
       }
     }
 
-    const { data, error } = await client.auth.getUser();
+    try {
+      const { data, error } = await client.auth.getUser();
 
-    if (error) {
-      return { data: null, error: error.message };
-    }
+      if (error) {
+        return { data: null, error: error.message };
+      }
 
-    if (!data.user) {
+      if (!data?.user) {
+        return { data: null, error: 'Authentication required.' };
+      }
+
+      return { data: toAuthUser(data.user), error: null };
+    } catch (_err) {
       return { data: null, error: 'Authentication required.' };
     }
-
-    return { data: toAuthUser(data.user), error: null };
   },
 
   async getCurrentSession(client: AppSupabaseClient = browserSupabase): Promise<UserSession['session']> {

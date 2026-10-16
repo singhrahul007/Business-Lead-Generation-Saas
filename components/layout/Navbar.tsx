@@ -50,7 +50,7 @@ export function Navbar() {
           {navItems.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               className="rounded-full px-4 py-2 transition hover:bg-white/10 hover:text-white"
             >
               {item.label}

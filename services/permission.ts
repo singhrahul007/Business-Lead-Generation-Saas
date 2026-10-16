@@ -76,6 +76,6 @@ export const PermissionService = {
   },
 
   hasPermission(role: Profile['role'] | undefined, permission: Permission) {
-    return canAccess(role, permission);
+    return canAccess(role ?? undefined, permission);
   },
 };

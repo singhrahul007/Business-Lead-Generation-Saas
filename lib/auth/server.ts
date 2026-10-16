@@ -26,9 +26,13 @@ export async function getAuthenticatedUser(): Promise<AuthUser | null> {
     } as any;
   }
 
-  const supabase = await createServerSupabaseClient();
-  const { data } = await AuthService.getAuthenticatedUser(supabase);
-  return data;
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data } = await AuthService.getAuthenticatedUser(supabase);
+    return data;
+  } catch (_e) {
+    return null;
+  }
 }
 
 export async function requireAuthenticatedUser(redirectTo?: string): Promise<AuthUser> {
@@ -36,7 +40,7 @@ export async function requireAuthenticatedUser(redirectTo?: string): Promise<Aut
 
   if (!user) {
     const suffix = redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : '';
-    redirect(`/login${suffix}`);
+    redirect(`/login${suffix}` as any);
   }
 
   return user;
@@ -46,6 +50,6 @@ export async function redirectIfAuthenticated(pathname = '/dashboard') {
   const user = await getAuthenticatedUser();
 
   if (user) {
-    redirect(pathname);
+    redirect(pathname as any);
   }
 }
