@@ -1,10 +1,22 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+function getSafeSupabaseConfig() {
+  let url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  let key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = 'https://demo-leadpilot.supabase.co';
+  }
+  if (!key || key === 'your_supabase_anon_key') {
+    key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.fake-anon-key-placeholder';
+  }
+
+  return { url, key };
+}
 
 export async function createServerSupabaseClient() {
+  const { url, key } = getSafeSupabaseConfig();
   const cookieStore = await cookies();
   type CookieToSet = {
     name: string;
@@ -12,7 +24,7 @@ export async function createServerSupabaseClient() {
     options?: Parameters<typeof cookieStore.set>[2];
   };
 
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  return createServerClient(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

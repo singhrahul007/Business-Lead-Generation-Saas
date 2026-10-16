@@ -14,6 +14,7 @@ const supabase = createClient();
 
 export const AuthService = {
   signInWithPassword,
+  signInWithOAuth,
   signUpWithPassword,
   resetPasswordForEmail,
   updatePassword,
@@ -39,6 +40,16 @@ function getRedirectUrl(pathname: string) {
 export async function signInWithPassword(payload: AuthCredentials): Promise<AuthSessionResult> {
   const { data, error } = await supabase.auth.signInWithPassword(payload);
   return { data: toUserSession(data), error: error?.message ?? null };
+}
+
+export async function signInWithOAuth(provider: 'google' | 'github'): Promise<AuthActionResult> {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: getRedirectUrl('/dashboard'),
+    },
+  });
+  return { error: error?.message ?? null };
 }
 
 export async function signUpWithPassword(payload: SignupPayload): Promise<AuthSessionResult> {

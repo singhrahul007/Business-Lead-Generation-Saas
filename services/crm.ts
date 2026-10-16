@@ -36,6 +36,9 @@ export const updateCompany = CompanyService.update.bind(CompanyService);
 
 // Contacts
 export const getContacts = ContactService.getAll.bind(ContactService);
+export const createContact = ContactService.create.bind(ContactService);
+export const createContactFromForm = ContactService.createFromForm.bind(ContactService);
+export const updateContact = ContactService.update.bind(ContactService);
 
 // Deals
 export const getDeals = DealService.getAll.bind(DealService);

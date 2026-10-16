@@ -4,7 +4,11 @@ import { ArrowRight } from 'lucide-react';
 const navItems = [
   { href: '/', label: 'Overview' },
   { href: '/dashboard', label: 'Dashboard' },
+  { href: '/leads', label: 'Leads' },
   { href: '/crm', label: 'CRM' },
+  { href: '/intelligence', label: 'Intelligence & AI' },
+  { href: '/analytics', label: 'Analytics' },
+  { href: '/developers', label: 'Developers & API' },
   { href: '/organizations', label: 'Organizations' },
 ];
 

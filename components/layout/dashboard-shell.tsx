@@ -20,6 +20,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <Link href="/dashboard" className="transition hover:text-cyan-300">Dashboard</Link>
             <Link href="/leads" className="transition hover:text-cyan-300">Leads</Link>
             <Link href="/crm" className="transition hover:text-cyan-300">CRM</Link>
+            <Link href="/intelligence" className="transition hover:text-cyan-300">Intelligence & AI</Link>
+            <Link href="/analytics" className="transition hover:text-cyan-300">Analytics</Link>
+            <Link href="/developers" className="transition hover:text-cyan-300">Developers & API</Link>
             <Link href="/organizations" className="transition hover:text-cyan-300">Organizations</Link>
             <form action="/api/auth/logout" method="POST">
               <button type="submit" className="rounded-full border border-white/10 px-3 py-1.5 transition hover:border-cyan-400 hover:text-cyan-300">Logout</button>

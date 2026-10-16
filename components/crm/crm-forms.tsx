@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   companyFormSchema,
+  contactFormSchema,
   dealFormSchema,
   leadFormSchema,
   noteFormSchema,
@@ -11,6 +12,7 @@ import {
 } from '@/lib/validators/crm';
 import {
   createCompanyFromForm,
+  createContactFromForm,
   createDealFromForm,
   createLeadFromForm,
   createNoteFromForm,
@@ -18,6 +20,7 @@ import {
 } from '@/services/crm';
 import type {
   CompanyFormValues,
+  ContactFormValues,
   DealFormValues,
   LeadFormValues,
   NoteFormValues,
@@ -95,6 +98,40 @@ export function CompanyForm({ onCreated }: FormProps) {
       <input {...register('address')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="Address" />
       <textarea {...register('description')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="Description" />
       <button type="submit" className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Add company'}</button>
+    </form>
+  );
+}
+
+export function ContactForm({ onCreated }: FormProps) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: { status: 'active' },
+  });
+
+  async function onSubmit(values: ContactFormValues) {
+    const result = await createContactFromForm(values);
+    if (!result.error) {
+      reset();
+      onCreated?.();
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+      <input {...register('full_name')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="Contact full name" />
+      <FormError message={errors.full_name?.message} />
+      <input {...register('email')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="Email" />
+      <FormError message={errors.email?.message} />
+      <input {...register('phone')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="Phone" />
+      <input {...register('title')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="Job title / role" />
+      <input {...register('linkedin_url')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="LinkedIn URL" />
+      <textarea {...register('notes')} className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" placeholder="Notes" />
+      <button type="submit" className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Add contact'}</button>
     </form>
   );
 }

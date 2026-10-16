@@ -1,10 +1,23 @@
 import { createBrowserClient } from '@supabase/ssr';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+function getSafeSupabaseConfig() {
+  let url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  let key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+  // If unset or placeholder/dummy value that is not a valid URL
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = 'https://demo-leadpilot.supabase.co';
+  }
+  if (!key || key === 'your_supabase_anon_key') {
+    key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.fake-anon-key-placeholder';
+  }
+
+  return { url, key };
+}
 
 export function createClient() {
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  const { url, key } = getSafeSupabaseConfig();
+  return createBrowserClient(url, key);
 }
 
 export const supabase = createClient();

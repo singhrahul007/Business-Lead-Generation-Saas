@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { AuthCard, SubmitButton } from '@/components/auth/AuthCard';
+import { AuthCard, OAuthButtons, SubmitButton } from '@/components/auth/AuthCard';
 import { signupSchema } from '@/lib/validators/auth';
-import { signUpWithPassword } from '@/services/auth';
+import { signInWithOAuth, signUpWithPassword } from '@/services/auth';
 import type { SignupFormValues } from '@/types/auth';
 
 export default function SignupPage() {
@@ -25,12 +25,12 @@ export default function SignupPage() {
       return;
     }
 
-    if (data.user?.identities?.length === 0) {
+    if (data?.user?.identities?.length === 0) {
       toast.error('This email is already registered.');
       return;
     }
 
-    if (data.session) {
+    if (data?.session) {
       toast.success('Account created successfully.');
       router.refresh();
       router.replace('/dashboard');
@@ -39,6 +39,13 @@ export default function SignupPage() {
 
     toast.success('Account created. Please check your email to confirm sign in.');
     router.replace('/login');
+  };
+
+  const handleOAuth = async (provider: 'google' | 'github') => {
+    const { error } = await signInWithOAuth(provider);
+    if (error) {
+      toast.error(error);
+    }
   };
 
   return (
@@ -71,6 +78,7 @@ export default function SignupPage() {
           {errors.password && <p className="mt-2 text-sm text-rose-300">{errors.password.message?.toString()}</p>}
         </div>
         <SubmitButton label="Create account" loading={isSubmitting} />
+        <OAuthButtons onOAuth={handleOAuth} />
       </form>
     </AuthCard>
   );
