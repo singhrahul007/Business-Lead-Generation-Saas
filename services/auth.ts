@@ -38,8 +38,60 @@ function getRedirectUrl(pathname: string) {
 }
 
 export async function signInWithPassword(payload: AuthCredentials): Promise<AuthSessionResult> {
-  const { data, error } = await supabase.auth.signInWithPassword(payload);
-  return { data: toUserSession(data), error: error?.message ?? null };
+  try {
+    // If running in local demo / dev mode without a connected Supabase backend
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const isMock = !url || url.includes('demo-leadpilot') || url.includes('your_supabase_project_url');
+
+    if (isMock) {
+      // Provide instant local session for default role credentials
+      const email = payload.email.toLowerCase();
+      let role = 'owner';
+      if (email.includes('admin')) role = 'admin';
+      else if (email.includes('manager')) role = 'manager';
+      else if (email.includes('member')) role = 'member';
+      else if (email.includes('viewer')) role = 'viewer';
+
+      const mockUser = {
+        id: `usr_${role}_001`,
+        app_metadata: {},
+        user_metadata: {
+          full_name: `${role.charAt(0).toUpperCase() + role.slice(1)} User`,
+          organization_name: 'LeadPilot Global',
+          role,
+        },
+        aud: 'authenticated',
+        created_at: new Date().toISOString(),
+        email: payload.email,
+        phone: '',
+      };
+
+      const mockSession = {
+        access_token: 'mock-access-token',
+        refresh_token: 'mock-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: mockUser as any,
+      };
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('leadpilot_demo_user', JSON.stringify(mockUser));
+      }
+
+      return {
+        data: {
+          user: mockUser as any,
+          session: mockSession as any,
+        },
+        error: null,
+      };
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword(payload);
+    return { data: toUserSession(data), error: error?.message ?? null };
+  } catch (err: any) {
+    return { data: null, error: err?.message || 'Authentication service unreachable.' };
+  }
 }
 
 export async function signInWithOAuth(provider: 'google' | 'github'): Promise<AuthActionResult> {
