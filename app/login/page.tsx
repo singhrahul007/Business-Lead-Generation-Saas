@@ -92,8 +92,8 @@ export default function LoginPage() {
     }
 
     toast.success('Signed in successfully.');
-    router.refresh();
-    router.replace(searchParams.get('redirectTo') || '/dashboard');
+    const destination = searchParams.get('redirectTo') || '/dashboard';
+    window.location.href = destination;
   };
 
   const handleOAuth = async (provider: 'google' | 'github') => {

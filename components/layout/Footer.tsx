@@ -1,4 +1,24 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+
+const appWorkspacePrefixes = [
+  '/dashboard',
+  '/leads',
+  '/crm',
+  '/intelligence',
+  '/analytics',
+  '/developers',
+  '/organizations',
+];
+
 export function Footer() {
+  const pathname = usePathname();
+
+  if (appWorkspacePrefixes.some((prefix) => pathname?.startsWith(prefix))) {
+    return null;
+  }
+
   return (
     <footer className="border-t border-white/10 bg-slate-950/60 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6">

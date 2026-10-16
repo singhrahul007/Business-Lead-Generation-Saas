@@ -17,6 +17,30 @@ function buildProfilePayload(user: AuthUser) {
 
 export const UserService = {
   async getAuthenticatedUser(client: AppSupabaseClient = browserSupabase): Promise<ApiResult<AuthUser>> {
+    // Check for demo mock user when running without live Supabase
+    if (typeof window !== 'undefined') {
+      const demoCookie = document.cookie.split('; ').find((row) => row.startsWith('sb-demo-role='));
+      if (demoCookie) {
+        const role = demoCookie.split('=')[1] || 'owner';
+        return {
+          data: {
+            id: `usr_${role}_001`,
+            app_metadata: {},
+            user_metadata: {
+              full_name: `${role.charAt(0).toUpperCase() + role.slice(1)} User`,
+              organization_name: 'LeadPilot Global',
+              role,
+            },
+            aud: 'authenticated',
+            created_at: new Date().toISOString(),
+            email: `${role}@leadpilot.ai`,
+            phone: '',
+          } as any,
+          error: null,
+        };
+      }
+    }
+
     const { data, error } = await client.auth.getUser();
 
     if (error) {

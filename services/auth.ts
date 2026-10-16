@@ -76,6 +76,9 @@ export async function signInWithPassword(payload: AuthCredentials): Promise<Auth
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('leadpilot_demo_user', JSON.stringify(mockUser));
+        // Set standard session cookie so middleware grants access immediately
+        document.cookie = `sb-access-token=mock-token-${role}; path=/; max-age=86400; SameSite=Lax`;
+        document.cookie = `sb-demo-role=${role}; path=/; max-age=86400; SameSite=Lax`;
       }
 
       return {
